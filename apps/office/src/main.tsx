@@ -22,6 +22,7 @@ import { Categories, Checklists } from './pages/Setup';
 import { Crew, Person } from './pages/Crew';
 import { ShopInventory, TechInventory } from './pages/Inventory';
 import { Inbox } from './pages/Inbox';
+import { Tasks } from './pages/Tasks';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -65,7 +66,7 @@ function Shell() {
           <button className="btn sm menubtn" aria-label="Open menu" onClick={() => setOpen(!open)}>☰ Menu</button>
           <label className="search"><span aria-hidden="true">🔎</span><input placeholder="Search customers, jobs, invoices" aria-label="Search" onKeyDown={(e) => { if (e.key === 'Enter') nav(`/customers?q=${encodeURIComponent((e.target as HTMLInputElement).value)}`); }} /></label>
           {mgr && <Link className="btn pri" to="/jobs?new=1">+ New appointment</Link>}
-          <Link className="btn" to="/soon/tasks">+ Task</Link>
+          <Link className="btn" to="/tasks?new=1">+ Task</Link>
           <Link className="btn" to="/soon/allsettings" aria-label="Settings">⚙ Settings</Link>
           <span style={{ flex: 1 }} />
           <span className="rolesw">Signed in as <b style={{ color: 'var(--ink)' }}>{member.name}</b></span>
@@ -87,6 +88,7 @@ function Shell() {
             <Route path="/shopinv" element={<ShopInventory />} />
             <Route path="/techinv" element={<TechInventory />} />
             <Route path="/inbox" element={<Inbox />} />
+            <Route path="/tasks" element={<Tasks />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customer/:id" element={<Customer />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}

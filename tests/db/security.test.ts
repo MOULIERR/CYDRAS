@@ -124,6 +124,19 @@ describe('payments', () => {
   });
 });
 
+describe('team tasks', () => {
+  it('a supervisor gives a tech a task; the tech sees it and checks it off; another tech cannot see it', async () => {
+    const [{ id: t }] = await as(db, ids.mike, `insert into public.tasks(company_id, assigned_to, created_by, title, due_on) values ($1,$2,$3,'Return core to Tropic Supply', current_date) returning id`, [company, carlosMember, mikeMember]);
+    await as(db, ids.carlos, `update public.tasks set done_at = now() where id = $1`, [t]);
+    const [r] = await as(db, ids.angel, `select done_at is not null as done from public.tasks where id = $1`, [t]);
+    expect(r.done).toBe(true);
+    expect(await as(db, ids.other, `select * from public.tasks`)).toEqual([]);
+  });
+  it('a tech cannot give tasks to someone else', async () => {
+    await expectDenied(as(db, ids.carlos, `insert into public.tasks(company_id, assigned_to, created_by, title) values ($1,$2,$3,'Do my paperwork')`, [company, mikeMember, carlosMember]));
+  });
+});
+
 describe('more visits on one job', () => {
   let visit2: string;
   it('a supervisor adds visit 2 to the same job for a later day', async () => {

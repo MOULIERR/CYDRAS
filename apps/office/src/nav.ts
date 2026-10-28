@@ -9,7 +9,7 @@ export const NAV: [string, NavItem[]][] = [
     { key: 'schedule', label: 'Schedule', path: '/schedule', about: 'Day, week and month views of every appointment and visit.' },
     { key: 'jobs', label: 'Jobs', path: '/jobs', about: 'Book jobs, assign techs, add visits, private notes.' },
     { key: 'crew', label: 'Crew', path: '/crew', about: 'Each tech: status, open jobs, closed jobs and tasks.' },
-    { key: 'tasks', label: 'Team tasks', about: 'To-dos for anyone on the team, with due dates.' },
+    { key: 'tasks', label: 'Team tasks', path: '/tasks', about: 'To-dos for anyone on the team, with due dates.' },
     { key: 'timesheets', label: 'Timesheets', path: '/timesheets', mgr: true, about: 'Hours from the clock-in button. Approve or fix with a reason.' },
     { key: 'scorecards', label: 'Tech scorecards', about: 'Revenue, callbacks, reviews and commission per tech.' },
     { key: 'shopinv', label: 'Shop inventory', path: '/shopinv', about: 'Parts in the shop. Truck stock is pulled from here.' },
