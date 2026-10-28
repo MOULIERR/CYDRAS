@@ -124,7 +124,7 @@ export function Job() {
         </div>
         <div className="card"><h3>Equipment</h3>{units.length ? units.map((u) => <div className="prow" key={u.id}><div className="t"><b>{u.tag ? `${u.tag} · ` : ''}{u.type}</b><br /><span className="s mono">{[u.make, u.model].filter(Boolean).join(' ')}{u.serial ? ` · S/N ${u.serial}` : ''}{u.year ? ` · ${u.year}` : ''}</span></div></div>) : <span className="s">No equipment on file yet. Techs add it from the phone (scan the data plate).</span>}</div>
         <div className="card"><h3>Past calls</h3>{past.length ? past.map((p) => <div className="prow" key={p.id} style={{ cursor: 'pointer' }} onClick={() => nav(`/job/${p.id}`)}><div className="t"><b>{p.type}</b><br /><span className="s">{dayLabel(dayKey(new Date(p.starts_at)))}{p.summary ? ` · ${p.summary}` : ''}</span></div></div>) : <span className="s">First visit. Nothing on file yet.</span>}</div>
-        <div className="card"><h3>Customer</h3><Link className="btn" to={`/customers?open=${job.customer_id}`}>Open {job.customers?.name} →</Link></div>
+        <div className="card"><h3>Customer</h3><Link className="btn" to={`/customer/${job.customer_id}`}>Open {job.customers?.name} →</Link></div>
       </div></div>
 
       {modal === 'edit' && <EditDispatch job={job} cats={cats} people={people} crew={crew} day={day} onClose={() => setModal(null)} onSave={async (v) => {

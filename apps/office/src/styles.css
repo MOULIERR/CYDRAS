@@ -205,7 +205,7 @@ body.dragging,body.dragging *{cursor:grabbing!important}
 .err{background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:10px 12px;font-weight:600}
 .pill{background:var(--chip);color:var(--muted)}
 .pill.ok{background:var(--ok);color:#fff}.pill.bad{background:var(--bad);color:#fff}.pill.go{background:var(--accent);color:var(--accent-ink)}
-.content button:not(.nav,.lnk,.btn,.blk,.chip,.alert,.vrow,.ptplus):not(.seg>button){display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:0 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;cursor:pointer}
+.content button:not(.nav,.lnk,.btn,.blk,.chip,.alert,.vrow,.ptplus,.wjob,.mday):not(.seg>button){display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:0 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;cursor:pointer}
 .content button.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .content button.danger{color:var(--bad)}
 .content button:disabled{opacity:.5;cursor:not-allowed}

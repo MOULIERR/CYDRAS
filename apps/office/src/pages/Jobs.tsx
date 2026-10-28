@@ -1,6 +1,6 @@
 // Book jobs and assign techs. The tech gets a push notification when they're put on a job.
 import { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { supabase, check } from '../supabase';
 import { useSession, isManager } from '../session';
 import { useLive } from '../live';
@@ -12,6 +12,7 @@ export function Jobs() {
   const { member } = useSession();
   const c = member!.company_id;
   const cats = catsOf(useCompany(c));
+  const [sp] = useSearchParams();
   const [day, setDay] = useState(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; });
   const [err, setErr] = useState('');
   const { data, reload } = useLive(async () => {
@@ -23,7 +24,7 @@ export function Jobs() {
     return { jobs, customers, techs };
   }, ['jobs', 'job_assignments', 'customers'], c, [c, day.getTime()]);
 
-  const [f, setF] = useState(() => { const s = new Date(); s.setMinutes(0, 0, 0); s.setHours(s.getHours() + 1); return { customer: '', type: '', category: 'No cooling', start: local(s), end: local(new Date(s.getTime() + 7200000)), tech: '' }; });
+  const [f, setF] = useState(() => { const pd = sp.get('d'); const s = pd ? new Date(pd + 'T08:00:00') : new Date(); if (!pd) { s.setMinutes(0, 0, 0); s.setHours(s.getHours() + 1); } return { customer: sp.get('c') ?? '', type: '', category: 'No cooling', start: local(s), end: local(new Date(s.getTime() + 7200000)), tech: '' }; });
   async function book(e: React.FormEvent) {
     e.preventDefault(); setErr('');
     try {

@@ -7,13 +7,14 @@ import { supabase } from './supabase';
 import { Login, Signup, Join } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
 import { Jobs } from './pages/Jobs';
-import { Customers } from './pages/Customers';
+import { Customers, Customer } from './pages/Customers';
 import { Team } from './pages/Team';
 import { Timesheets } from './pages/Timesheets';
 import { Billing } from './pages/Billing';
 import { Soon } from './pages/Soon';
 import { Dispatch } from './pages/Dispatch';
 import { Job } from './pages/Job';
+import { Schedule } from './pages/Schedule';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -68,7 +69,9 @@ function Shell() {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/dispatch" element={<Dispatch />} />
             <Route path="/job/:id" element={<Job />} />
+            <Route path="/schedule" element={<Schedule />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/customer/:id" element={<Customer />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}
             {mgr && <Route path="/team" element={<Team />} />}
             {owner && <Route path="/billing" element={<Billing />} />}
