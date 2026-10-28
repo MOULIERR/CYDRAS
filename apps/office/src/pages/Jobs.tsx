@@ -3,12 +3,14 @@ import { Fragment, useState } from 'react';
 import { supabase, check } from '../supabase';
 import { useSession, isManager } from '../session';
 import { useLive } from '../live';
+import { catsOf, useCompany } from '../ui';
 
 const local = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 
 export function Jobs() {
   const { member } = useSession();
   const c = member!.company_id;
+  const cats = catsOf(useCompany(c));
   const [day, setDay] = useState(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; });
   const [err, setErr] = useState('');
   const { data, reload } = useLive(async () => {
@@ -71,7 +73,7 @@ export function Jobs() {
           <h2>Book a job</h2>
           <div className="grid">
             <label>Customer<select required value={f.customer} onChange={(e) => setF({ ...f, customer: e.target.value })}><option value="">Pick one…</option>{data.customers.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></label>
-            <label>Category<select value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })}>{['No cooling', 'No heat', 'PM / Maintenance', 'Install', 'Estimate', 'Repair', 'Leak / water', 'Thermostat'].map((x) => <option key={x}>{x}</option>)}</select></label>
+            <label>Category<select value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })}>{cats.map((x) => <option key={x.id}>{x.n}</option>)}</select></label>
             <label>What's wrong<input value={f.type} onChange={(e) => setF({ ...f, type: e.target.value })} placeholder="RTU-2 not cooling" /></label>
             <label>Arrive from<input type="datetime-local" step={300} value={f.start} onChange={(e) => setF({ ...f, start: e.target.value })} /></label>
             <label>Arrive by<input type="datetime-local" step={300} value={f.end} onChange={(e) => setF({ ...f, end: e.target.value })} /></label>

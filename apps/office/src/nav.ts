@@ -5,7 +5,7 @@ export const NAV: [string, NavItem[]][] = [
   ['Work', [
     { key: 'dash', label: 'Dashboard', path: '/', about: "Today's jobs, who's clocked in, what needs a tech." },
     { key: 'live', label: 'Live map', about: 'Where every tech is while clocked in, and which job they are heading to.' },
-    { key: 'dispatch', label: 'Dispatch board', about: 'One row per tech, drag jobs to move them, every 5 minutes.' },
+    { key: 'dispatch', label: 'Dispatch board', path: '/dispatch', about: 'One row per tech, drag jobs to move them, every 5 minutes.' },
     { key: 'schedule', label: 'Schedule', about: 'Day, week and month views of every appointment and visit.' },
     { key: 'jobs', label: 'Jobs', path: '/jobs', about: 'Book jobs, assign techs, add visits, private notes.' },
     { key: 'crew', label: 'Crew', about: 'Each tech: status, open jobs, closed jobs and tasks.' },

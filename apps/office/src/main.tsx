@@ -12,6 +12,7 @@ import { Team } from './pages/Team';
 import { Timesheets } from './pages/Timesheets';
 import { Billing } from './pages/Billing';
 import { Soon } from './pages/Soon';
+import { Dispatch } from './pages/Dispatch';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -64,6 +65,7 @@ function Shell() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/dispatch" element={<Dispatch />} />
             <Route path="/customers" element={<Customers />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}
             {mgr && <Route path="/team" element={<Team />} />}
