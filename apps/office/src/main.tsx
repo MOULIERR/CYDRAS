@@ -18,6 +18,8 @@ import { Schedule } from './pages/Schedule';
 import { PriceBook } from './pages/PriceBook';
 import { Invoices } from './pages/Invoices';
 import { Estimates } from './pages/Estimates';
+import { Categories, Checklists } from './pages/Setup';
+import { Crew, Person } from './pages/Crew';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -76,6 +78,10 @@ function Shell() {
             <Route path="/pricebook" element={<PriceBook />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/estimates" element={<Estimates />} />
+            <Route path="/cats" element={<Categories />} />
+            <Route path="/checklists" element={<Checklists />} />
+            <Route path="/crew" element={<Crew />} />
+            <Route path="/crew/:id" element={<Person />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customer/:id" element={<Customer />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}

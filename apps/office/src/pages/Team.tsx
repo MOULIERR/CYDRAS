@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { supabase, check } from '../supabase';
 import { useSession } from '../session';
 import { useLive } from '../live';
+import { DEF } from '../perms';
 
 export function Team() {
   const { member } = useSession();
@@ -11,7 +12,7 @@ export function Team() {
   const [err, setErr] = useState('');
   const [code, setCode] = useState('');
   const { data, reload } = useLive(async () => {
-    const people = check(await supabase.from('members').select('id, name, role, email, phone, active, user_id').eq('company_id', c).order('name')) as any[];
+    const people = check(await supabase.from('members').select('id, name, role, email, phone, active, user_id, perms').eq('company_id', c).order('name')) as any[];
     const invites = check(await supabase.from('invites').select('code, member_id, expires_at, used_at').eq('company_id', c).is('used_at', null)) as any[];
     const pay = owner ? (check(await supabase.from('member_pay').select('member_id, hourly_rate').eq('company_id', c)) as any[]) : [];
     return { people, invites, pay };
@@ -53,6 +54,22 @@ export function Team() {
         </tbody></table></div>
         {owner && <span className="muted">Only you (the owner) can see pay rates.</span>}
       </div>
+      {owner && <Perms people={(data?.people ?? []).filter((p) => p.role !== 'owner' && p.active)} onSave={async (id, perms) => { setErr(''); try { check(await supabase.from('members').update({ perms }).eq('id', id)); reload(); } catch (e) { setErr((e as Error).message); } }} />}
     </>
   );
+}
+
+const PERMS: [string, string][] = [['schedule', 'Schedule appointments'], ['assign', 'Assign techs to jobs'], ['allJobs', "See everyone's jobs"], ['customers', 'Add customers'], ['estimates', 'Create estimates'], ['payments', 'Take payments'], ['prices', 'Change prices on a job'], ['discounts', 'Give discounts'], ['remove', 'Remove notes, equipment, and files'], ['pricebook', 'Edit the price book'], ['acctnums', 'See supply house account numbers'], ['inventory', 'Add parts to trucks'], ['seePrices', 'See prices and totals']];
+
+function Perms({ people, onSave }: { people: any[]; onSave: (id: string, perms: Record<string, boolean>) => void }) {
+  const [sel, setSel] = useState<string>('');
+  const p = people.find((x) => x.id === (sel || people[0]?.id));
+  if (!p) return null;
+  const eff = (k: string) => (p.perms && k in p.perms ? !!p.perms[k] : !!DEF[p.role]?.[k]);
+  return <div className="card"><div className="cardh"><h2>Who can do what</h2>
+    <select className="inp" style={{ width: 'auto' }} value={p.id} onChange={(e) => setSel(e.target.value)}>{people.map((x) => <option key={x.id} value={x.id}>{x.name} · {x.role}</option>)}</select></div>
+    <span className="s">Starts from the role's normal settings. Turn single things on or off for this person.</span>
+    {PERMS.map(([k, l]) => <label key={k} className="prow" style={{ flexDirection: 'row', cursor: 'pointer' }}><span className="t">{l}</span>
+      <input type="checkbox" className="sw" checked={eff(k)} onChange={(e) => onSave(p.id, { ...(p.perms ?? {}), [k]: e.target.checked })} /></label>)}
+  </div>;
 }
