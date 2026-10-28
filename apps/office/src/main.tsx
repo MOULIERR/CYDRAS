@@ -26,6 +26,8 @@ import { Tasks } from './pages/Tasks';
 import { AllSettings, Alerts, Account, Supply, Docs, Sheets, Help, Refer, Legal } from './pages/Settings';
 import { Revenue, Costing, Reports, Import, Scorecards } from './pages/Owner';
 import { LiveMap } from './pages/LiveMap';
+import { Plans, Booking, PortalSet, Financing, Reviews, Marketing, QuickBooks } from './pages/Grow';
+import { BookPage, PortalPage } from './pages/Public';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -34,6 +36,7 @@ function Shell() {
   const loc = useLocation();
   const nav = useNavigate();
   useEffect(() => setOpen(false), [loc.pathname]);
+  if (/^\/(book|p)\//.test(loc.pathname)) return <Routes><Route path="/book/:slug" element={<BookPage />} /><Route path="/p/:token" element={<PortalPage />} /></Routes>;
   if (loading) return <main className="content s">Loading…</main>;
   if (!session) return (
     <div className="authwrap"><Routes>
@@ -107,6 +110,13 @@ function Shell() {
             {mgr && <Route path="/team" element={<Team />} />}
             {owner && <Route path="/billing" element={<Billing />} />}
             {mgr && <Route path="/live" element={<LiveMap />} />}
+            <Route path="/plans" element={<Plans />} />
+            {mgr && <Route path="/booking" element={<Booking />} />}
+            <Route path="/portalset" element={<PortalSet />} />
+            {mgr && <Route path="/financing" element={<Financing />} />}
+            {mgr && <Route path="/reviews" element={<Reviews />} />}
+            {mgr && <Route path="/marketing" element={<Marketing />} />}
+            {owner && <Route path="/qb" element={<QuickBooks />} />}
             {mgr && <Route path="/scorecards" element={<Scorecards />} />}
             {owner && <Route path="/revenue" element={<Revenue />} />}
             {owner && <Route path="/costing" element={<Costing />} />}

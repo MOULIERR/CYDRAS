@@ -237,3 +237,55 @@ describe('Cydras billing', () => {
     expect((await as(db, ids.angel, `select status from public.subscriptions`))[0].status).toBe('active');
   });
 });
+
+async function asAnon<T = any>(sql: string, params: any[] = []) {
+  await db.exec(`reset role; select set_config('request.jwt.claim.sub', '', false); set role anon;`);
+  try { return (await db.query<T>(sql, params)).rows; } finally { await db.exec('reset role;'); }
+}
+
+describe('maintenance plans, online booking, customer portal, campaigns', () => {
+  it('a supervisor adds a plan; a tech can see it but not change it; another company cannot see it', async () => {
+    const [{ id: p }] = await as(db, ids.mike, `insert into public.service_plans(company_id, customer_id, name, price, bill_every, visits_per_year, next_visit_on) values ($1,$2,'Comfort Club',179,'year',2,current_date+30) returning id`, [company, cust]);
+    expect((await as(db, ids.carlos, `select name from public.service_plans where id=$1`, [p]))[0].name).toBe('Comfort Club');
+    expect(await as(db, ids.carlos, `update public.service_plans set price=0 where id=$1 returning id`, [p])).toEqual([]);
+    expect(await as(db, ids.other, `select * from public.service_plans`)).toEqual([]);
+  });
+
+  it('booking is closed until the owner turns it on, then anyone can send a request', async () => {
+    await server(db, `update public.companies set booking_slug='coastal-air' where id=$1`, [company]);
+    expect((await asAnon(`select public.booking_info('coastal-air') v`))[0].v).toBeNull();
+    await expectDenied(asAnon(`select public.booking_submit('coastal-air','Jose','9545550100',null,null,null,null,'any',null)`), /not open/);
+    await as(db, ids.angel, `update public.companies set settings = settings || '{"booking":{"on":true,"types":["No cooling","Tune-up"]}}' where id=$1`, [company]);
+    const [{ v }] = await asAnon(`select public.booking_info('Coastal-Air') v`);
+    expect(v.name).toBe('Coastal Air & Heat');
+    await asAnon(`select public.booking_submit('coastal-air','Jose Ortiz','9545550100','','12 Palm Rd','No cooling',current_date+1,'morning','Upstairs unit',true)`);
+    const rows = await as(db, ids.mike, `select name, status, sms_ok from public.booking_requests where company_id=$1`, [company]);
+    expect(rows).toEqual([{ name: 'Jose Ortiz', status: 'new', sms_ok: true }]);
+    expect(await as(db, ids.carlos, `select * from public.booking_requests`)).toEqual([]);
+    expect(await as(db, ids.other, `select * from public.booking_requests`)).toEqual([]);
+    await expectDenied(asAnon(`select * from public.booking_requests`));
+    await expectDenied(asAnon(`insert into public.booking_requests(company_id, name, phone) values ($1,'x','1234567')`, [company]));
+  });
+
+  it('a portal link shows only that customer, and approving an estimate works once', async () => {
+    const [{ id: est }] = await as(db, ids.angel, `insert into public.estimates(company_id, customer_id, title, status, options, sent_at) values ($1,$2,'Replace RTU','sent','[{"name":"Repair","lines":[]},{"name":"Replace","lines":[]}]', now()) returning id`, [company, cust]);
+    const [{ token }] = await as(db, ids.angel, `insert into public.portal_links(company_id, customer_id) values ($1,$2) returning token`, [company, cust]);
+    const [{ v }] = await asAnon(`select public.portal_view($1) v`, [token]);
+    expect(v.customer.name).toBe('Sunrise Plaza');
+    expect(v.estimates.map((e: any) => e.title)).toContain('Replace RTU');
+    expect((await asAnon(`select public.portal_view('nope') v`))[0].v).toBeNull();
+    await expectDenied(asAnon(`select public.portal_answer($1,$2,5,true)`, [token, est]), /Pick an option/);
+    await asAnon(`select public.portal_answer($1,$2,1,true)`, [token, est]);
+    const [e] = await as(db, ids.angel, `select status, picked from public.estimates where id=$1`, [est]);
+    expect(e).toEqual({ status: 'approved', picked: 1 });
+    await expectDenied(asAnon(`select public.portal_answer($1,$2,0,true)`, [token, est]), /already answered/);
+    await as(db, ids.angel, `update public.portal_links set revoked_at=now() where token=$1`, [token]);
+    expect((await asAnon(`select public.portal_view($1) v`, [token]))[0].v).toBeNull();
+    expect(await as(db, ids.other, `select * from public.portal_links`)).toEqual([]);
+  });
+
+  it('only managers can make campaigns', async () => {
+    await as(db, ids.mike, `insert into public.campaigns(company_id, name, body, audience) values ($1,'Fall tune-up','Book your fall tune-up','all')`, [company]);
+    await expectDenied(as(db, ids.carlos, `insert into public.campaigns(company_id, name, body, audience) values ($1,'x','x','all')`, [company]));
+  });
+});

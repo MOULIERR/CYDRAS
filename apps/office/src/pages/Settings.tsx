@@ -6,7 +6,7 @@ import { supabase, check } from '../supabase';
 import { useSession, isManager } from '../session';
 import { Modal, PageH, dayLabel, money, today, useCompany } from '../ui';
 
-function useCo() {
+export function useCo() {
   const { member } = useSession();
   const c = member!.company_id;
   const company = useCompany(c);
@@ -20,7 +20,7 @@ function useCo() {
   const saveSettings = (patch: Record<string, unknown>, msg?: string) => save({ settings: { ...(company?.settings ?? {}), ...patch } }, msg);
   return { member: member!, company, owner, err, saved, save, saveSettings, mgr: isManager(member) };
 }
-const Msg = ({ err, saved }: { err: string; saved: string }) => <>{err && <div className="err">{err}</div>}{saved && <div className="s" role="status" style={{ fontWeight: 700, color: 'var(--ok)' }}>✓ {saved}</div>}</>;
+export const Msg = ({ err, saved }: { err: string; saved: string }) => <>{err && <div className="err">{err}</div>}{saved && <div className="s" role="status" style={{ fontWeight: 700, color: 'var(--ok)' }}>✓ {saved}</div>}</>;
 
 const GROUPS: [string, [string, string, string][]][] = [
   ['Company', [['/account', 'Account & preferences', 'Company name, phone, license, invoice message, tax rate'], ['/billing', 'Bank & payouts', 'Your Cydras plan and card payments'], ['/docs', 'Documents', 'Licenses and insurance with expiry reminders']]],

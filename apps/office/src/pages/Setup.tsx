@@ -6,7 +6,7 @@ import { useLive } from '../live';
 import { Modal, PageH, catsOf, useCompany, type Cat } from '../ui';
 
 const PAL = ['#2a7de1', '#d9480f', '#7b4ccf', '#1f8a4c', '#0b8a8a', '#1c6fb5', '#a07a00', '#c2255c', '#98002e', '#5f6670'];
-const DEFAULT_TYPES = ['Estimate', 'Install', 'Leak / water', 'No cooling', 'No heat', 'PM visit', 'Thermostat'];
+export const DEFAULT_TYPES = ['Estimate', 'Install', 'Leak / water', 'No cooling', 'No heat', 'PM visit', 'Thermostat'];
 
 function useSettings() {
   const { member } = useSession();
