@@ -15,6 +15,8 @@ import { Soon } from './pages/Soon';
 import { Dispatch } from './pages/Dispatch';
 import { Job } from './pages/Job';
 import { Schedule } from './pages/Schedule';
+import { PriceBook } from './pages/PriceBook';
+import { Invoices } from './pages/Invoices';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -70,6 +72,8 @@ function Shell() {
             <Route path="/dispatch" element={<Dispatch />} />
             <Route path="/job/:id" element={<Job />} />
             <Route path="/schedule" element={<Schedule />} />
+            <Route path="/pricebook" element={<PriceBook />} />
+            <Route path="/invoices" element={<Invoices />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customer/:id" element={<Customer />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}

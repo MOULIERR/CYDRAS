@@ -18,7 +18,7 @@ export const NAV: [string, NavItem[]][] = [
   ]],
   ['Customers', [
     { key: 'customers', label: 'Customers', path: '/customers', about: 'Every customer, their sites, equipment and history.' },
-    { key: 'invoices', label: 'Invoices & payments', about: 'Every invoice, paid or not, find by customer name. Refunds and fixes.' },
+    { key: 'invoices', label: 'Invoices & payments', path: '/invoices', about: 'Every invoice, paid or not, find by customer name. Refunds and fixes.' },
     { key: 'estimates', label: 'Estimates', about: 'Sent, approved, pending and declined estimates.' },
     { key: 'financing', label: 'Financing', about: 'Offer monthly payments on big jobs.' },
     { key: 'reviews', label: 'Review requests', about: 'Ask happy customers for a Google review after the job.' },
@@ -26,7 +26,7 @@ export const NAV: [string, NavItem[]][] = [
     { key: 'portalset', label: 'Customer portal', about: 'What customers see when they log in.' },
     { key: 'booking', label: 'Online booking', about: 'Customers request appointments from your website.' },
     { key: 'plans', label: 'Maintenance plans', about: 'Members, visits due, and auto-billing.' },
-    { key: 'pricebook', label: 'Price book', about: 'Your prices for every task, by customer type.' },
+    { key: 'pricebook', label: 'Price book', path: '/pricebook', about: 'Your prices for every task, by customer type.' },
   ]],
   ['Set up', [
     { key: 'allsettings', label: '⚙ All settings', about: 'Every setting in one searchable list.' },

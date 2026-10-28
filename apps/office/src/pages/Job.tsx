@@ -141,9 +141,9 @@ export function Job() {
         }); if (ok) setModal(null); }} />}
       {modal === 'book' && <Modal title="Add from the price book" onClose={() => setModal(null)}>
         {book.length ? <PriceBook book={book} kind={job.customers?.kind} onPick={(desc, price) => run(async () => { check(await supabase.from('job_lines').insert({ company_id: c, job_id: root.id, description: desc, price, qty: 1, kind: 'service', position: lines.length })); setModal(null); })} />
-          : <div className="empty">Your price book is empty. Add your prices in <b>Price book</b> (coming next), or use <b>+ Materials</b> to type a line.</div>}
+          : <div className="empty">Your price book is empty. Add your prices in <b>Price book</b> in the menu, or use <b>+ Materials</b> to type a line.</div>}
       </Modal>}
-      {modal === 'line' && <LineForm onClose={() => setModal(null)} onSave={(l) => run(async () => { check(await supabase.from('job_lines').insert({ company_id: c, job_id: root.id, description: l.d, price: l.p, qty: l.q, kind: 'part', position: lines.length })); setModal(null); })} />}
+      {modal === 'line' && <LineForm mats={company?.settings?.materials ?? []} onClose={() => setModal(null)} onSave={(l) => run(async () => { check(await supabase.from('job_lines').insert({ company_id: c, job_id: root.id, description: l.d, price: l.p, qty: l.q, kind: 'part', position: lines.length })); setModal(null); })} />}
       {modal === 'disc' && <DiscountForm cur={root.discount} sub={t.sub} onClose={() => setModal(null)} onSave={(d) => run(async () => { check(await supabase.from('jobs').update({ discount: d }).eq('id', root.id)); setModal(null); })} />}
       {modal === 'pay' && <PayForm due={t.due} onClose={() => setModal(null)} onSave={(p) => run(async () => {
         const inv = await syncInvoice();
@@ -216,18 +216,21 @@ function AddVisit({ root, visits, people, crew, onClose, onSave }: { root: any; 
 
 function PriceBook({ book, kind, onPick }: { book: any[]; kind?: string; onPick: (desc: string, price: number) => void }) {
   const [q, setQ] = useState('');
-  const rate = kind === 'business' ? 'com' : 'res';
+  const [rate, setRate] = useState(kind === 'business' ? 'com' : 'res');
+  const NAMES: Record<string, string> = { res: 'Residential', com: 'Commercial', ah: 'After hours' };
   const list = book.filter((b) => !q || b.name.toLowerCase().includes(q.toLowerCase()));
   return <>
+    <div className="seg" role="group" aria-label="Price">{Object.entries(NAMES).map(([k, n]) => <button key={k} aria-pressed={rate === k} onClick={() => setRate(k)}>{n}</button>)}</div>
     <input className="inp" placeholder="Search the price book" value={q} onChange={(e) => setQ(e.target.value)} />
-    {list.map((b) => { const p = Number(b.prices?.[rate] ?? b.prices?.res ?? Object.values(b.prices ?? {})[0] ?? 0);
-      return <button key={b.id} className="alert" onClick={() => onPick(`${b.name} (${rate === 'com' ? 'Commercial' : 'Residential'})`, p)}><span style={{ flex: 1 }}><b>{b.name}</b><br /><span className="s">{b.category}</span></span><b className="mono">{money(p)}</b></button>; })}
+    {list.filter((b) => b.prices?.[rate] != null).map((b) => { const p = Number(b.prices[rate]);
+      return <button key={b.id} className="alert" onClick={() => onPick(`${b.name} (${NAMES[rate]})`, p)}><span style={{ flex: 1 }}><b>{b.name}</b><br /><span className="s">{b.category}</span></span><b className="mono">{money(p)}</b></button>; })}
   </>;
 }
 
-function LineForm({ onClose, onSave }: { onClose: () => void; onSave: (l: { d: string; p: number; q: number }) => void }) {
+function LineForm({ mats, onClose, onSave }: { mats: [string, string, number][]; onClose: () => void; onSave: (l: { d: string; p: number; q: number }) => void }) {
   const [l, setL] = useState({ d: '', p: '', q: '1' }); const [e, setE] = useState('');
   return <Modal title="Add materials or a line" onClose={onClose} onSave={() => { const p = Number(l.p), q = Number(l.q); if (!l.d.trim()) return setE('Write what it is.'); if (!(p >= 0) || !(q > 0)) return setE('Check the price and quantity.'); onSave({ d: l.d.trim(), p, q }); }}>
+    {mats.length > 0 && <div className="chips">{mats.map((m) => <button key={m[0]} type="button" className="chip" aria-pressed={l.d === m[0]} onClick={() => setL({ ...l, d: m[0], p: String(m[2]) })}>{m[0]} · ${m[2]}/{m[1]}</button>)}</div>}
     <div className="form"><label className="field full">What is it<input value={l.d} placeholder="Capacitor 45/5 MFD" onChange={(x) => setL({ ...l, d: x.target.value })} /></label>
       <label className="field">Price each<input inputMode="decimal" value={l.p} placeholder="0.00" onChange={(x) => setL({ ...l, p: x.target.value })} /></label>
       <label className="field">Quantity<input inputMode="decimal" value={l.q} onChange={(x) => setL({ ...l, q: x.target.value })} /></label></div>

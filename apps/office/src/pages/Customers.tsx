@@ -20,7 +20,7 @@ export function Customers() {
   const [q, setQ] = useState(sp.get('q') ?? '');
   const [adding, setAdding] = useState(false);
   const { data, reload } = useLive(async () => check(await supabase.from('customers')
-    .select('id, name, kind, contact, customer_contacts(kind, value, is_primary, deleted_at), sites(address, is_primary, deleted_at), units(id, deleted_at), invoices(total, status, deleted_at, payments(amount, refunded_amount, voided_at, status))')
+    .select('id, name, kind, contact, customer_contacts(kind, value, is_primary, deleted_at), sites(address, is_primary, deleted_at), units(id, deleted_at), invoices!invoices_customer_id_fkey(total, status, deleted_at, payments(amount, refunded_amount, voided_at, status))')
     .eq('company_id', c).is('deleted_at', null).order('name')) as any[], ['customers', 'customer_contacts', 'sites', 'units', 'invoices'], c, [c]);
 
   const addr = (x: any) => { const s = (x.sites ?? []).filter((y: any) => !y.deleted_at); return (s.find((y: any) => y.is_primary) ?? s[0])?.address ?? ''; };
