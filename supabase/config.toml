@@ -1,0 +1,25 @@
+# Supabase project settings for Cydras.
+project_id = "cydras"
+
+[auth]
+site_url = "https://office.cydras.app"
+additional_redirect_urls = ["cydras://", "http://localhost:5173"]
+minimum_password_length = 10
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+
+[storage]
+file_size_limit = "50MiB"
+
+# These three are called by Stripe, Twilio and the database — not by a logged-in person.
+# They check their own signatures/secrets instead of a login.
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.twilio-inbound]
+verify_jwt = false
+
+[functions.notify]
+verify_jwt = false

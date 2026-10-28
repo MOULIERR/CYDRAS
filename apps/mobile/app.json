@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "Cydras",
+    "slug": "cydras",
+    "scheme": "cydras",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "app.cydras.mobile",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Cydras uses your location while you are clocked in, so the office can dispatch the closest tech and customers can see you're on the way.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Cydras shares your location only while you are clocked in. It stops the moment you clock out.",
+        "NSCameraUsageDescription": "Take photos of equipment, data plates and the work you did.",
+        "NSPhotoLibraryUsageDescription": "Add photos of the job from your library.",
+        "NSMicrophoneUsageDescription": "Record voice notes for your team.",
+        "UIBackgroundModes": [
+          "location",
+          "remote-notification"
+        ]
+      },
+      "entitlements": {
+        "com.apple.developer.proximity-reader.payment.acceptance": true
+      }
+    },
+    "android": {
+      "package": "app.cydras.mobile",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "POST_NOTIFICATIONS",
+        "NFC"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#F26B1D"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Add photos of the job from your library."
+        }
+      ],
+      [
+        "@stripe/stripe-terminal-react-native",
+        {
+          "bluetoothBackgroundMode": false,
+          "locationWhenInUsePermission": "Cydras needs your location to take card payments.",
+          "tapToPayCheck": true
+        }
+      ]
+    ],
+    "extra": {
+      "supabaseUrl": "https://YOUR-PROJECT.supabase.co",
+      "supabaseAnonKey": "YOUR-ANON-KEY",
+      "officeUrl": "https://office.cydras.app"
+    }
+  }
+}
