@@ -31,7 +31,7 @@ export function Team() {
   }
   return (
     <>
-      <div className="pageh"><div><p className="eyebrow">Set up</p><h1>Team</h1></div></div>
+      <div className="pageh"><div><p className="eyebrow">Set up</p><h1>Team &amp; permissions</h1></div></div>
       <form className="card" onSubmit={invite}>
         <h2>Add a person</h2>
         <div className="grid">
@@ -47,7 +47,7 @@ export function Team() {
       <div className="card">
         <div className="tscroll"><table><thead><tr><th>Name</th><th>Role</th><th>Status</th>{owner && <th>Hourly pay</th>}<th></th></tr></thead><tbody>
           {(data?.people ?? []).map((p) => { const inv = data!.invites.find((i) => i.member_id === p.id); return (
-            <tr key={p.id}><td><b>{p.name}</b><br /><span className="muted">{p.email ?? ''}</span></td><td>{p.role}</td>
+            <tr key={p.id}><td><b>{p.name}</b><br /><span className="muted">{p.email ?? ''}</span></td><td style={{ textTransform: 'capitalize' }}>{p.role}</td>
               <td>{!p.active ? <span className="pill bad">Removed</span> : p.user_id ? <span className="pill ok">Active</span> : <span className="pill">Invite code {inv?.code ?? 'expired'}</span>}</td>
               {owner && <td><input style={{ width: 90 }} type="number" step="0.5" defaultValue={data!.pay.find((x) => x.member_id === p.id)?.hourly_rate ?? ''} onBlur={(e) => setRate(p.id, e.target.value)} /></td>}
               <td>{p.role !== 'owner' && p.id !== member!.id && <button className={p.active ? 'danger' : ''} onClick={() => deactivate(p.id, !p.active)}>{p.active ? 'Remove' : 'Bring back'}</button>}</td></tr>); })}
