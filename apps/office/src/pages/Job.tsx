@@ -233,7 +233,7 @@ function LineForm({ mats, onClose, onSave }: { mats: [string, string, number][];
   const [l, setL] = useState({ d: '', p: '', q: '1' }); const [e, setE] = useState('');
   return <Modal title="Add materials or a line" onClose={onClose} onSave={() => { const p = Number(l.p), q = Number(l.q); if (!l.d.trim()) return setE('Write what it is.'); if (!(p >= 0) || !(q > 0)) return setE('Check the price and quantity.'); onSave({ d: l.d.trim(), p, q }); }}>
     {mats.length > 0 && <div className="chips">{mats.map((m) => <button key={m[0]} type="button" className="chip" aria-pressed={l.d === m[0]} onClick={() => setL({ ...l, d: m[0], p: String(m[2]) })}>{m[0]} · ${m[2]}/{m[1]}</button>)}</div>}
-    <div className="form"><label className="field full">What is it<input value={l.d} placeholder="Capacitor 45/5 MFD" onChange={(x) => setL({ ...l, d: x.target.value })} /></label>
+    <div className="form"><label className="field full">What is it<input value={l.d} placeholder="Part or item name" onChange={(x) => setL({ ...l, d: x.target.value })} /></label>
       <label className="field">Price each<input inputMode="decimal" value={l.p} placeholder="0.00" onChange={(x) => setL({ ...l, p: x.target.value })} /></label>
       <label className="field">Quantity<input inputMode="decimal" value={l.q} onChange={(x) => setL({ ...l, q: x.target.value })} /></label></div>
     {e && <div className="err">{e}</div>}

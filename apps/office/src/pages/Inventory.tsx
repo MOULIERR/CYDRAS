@@ -64,9 +64,9 @@ export function ShopInventory() {
         check(await supabase.from('stock').upsert({ location_id: shopId, part_id: pid, company_id: c, qty: Math.max(0, Math.floor(Number(add.qty) || 0)), min_qty: Math.max(0, Math.floor(Number(add.min) || 0)) }));
         setAdd(null);
       })}>
-        <div className="form"><label className="field full">Part<input value={add.name} placeholder="Capacitor 45/5 MFD" onChange={(e) => setAdd({ ...add, name: e.target.value })} /></label>
+        <div className="form"><label className="field full">Part<input value={add.name} placeholder="Part name" onChange={(e) => setAdd({ ...add, name: e.target.value })} /></label>
           <label className="field">Part #<input value={add.part_number} onChange={(e) => setAdd({ ...add, part_number: e.target.value })} /></label>
-          <label className="field">Supplier<input value={add.supplier} placeholder="Tropic Supply" onChange={(e) => setAdd({ ...add, supplier: e.target.value })} /></label>
+          <label className="field">Supplier<input value={add.supplier} placeholder="Supply house name" onChange={(e) => setAdd({ ...add, supplier: e.target.value })} /></label>
           <label className="field">Your cost ($)<input inputMode="decimal" value={add.cost} onChange={(e) => setAdd({ ...add, cost: e.target.value })} /></label>
           <label className="field">How many in the shop<input inputMode="numeric" value={add.qty} onChange={(e) => setAdd({ ...add, qty: e.target.value })} /></label>
           <label className="field">Warn me when it gets to<input inputMode="numeric" value={add.min} onChange={(e) => setAdd({ ...add, min: e.target.value })} /></label></div>
