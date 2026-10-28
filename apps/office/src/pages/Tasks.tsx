@@ -43,7 +43,7 @@ export function Tasks() {
         if (!add.assigned_to) throw new Error('Pick who it is for.');
         check(await supabase.from('tasks').insert({ company_id: c, created_by: member!.id, assigned_to: add.assigned_to, title: add.title.trim(), due_on: add.due_on || null })); setAdd(null);
       })}>
-        <label className="field">Task<input value={add.title} placeholder="Order RTU from Gemaire" onChange={(e) => setAdd({ ...add, title: e.target.value })} /></label>
+        <label className="field">Task<input value={add.title} placeholder="Name of task" onChange={(e) => setAdd({ ...add, title: e.target.value })} /></label>
         <div className="form">
           <label className="field">For<select value={add.assigned_to} disabled={!mgr} onChange={(e) => setAdd({ ...add, assigned_to: e.target.value })}><option value="">Pick one…</option>{data.people.map((p) => <option key={p.id} value={p.id}>{p.id === member!.id ? `${p.name} (you)` : p.name}</option>)}</select></label>
           <label className="field">Due<input type="date" value={add.due_on} onChange={(e) => setAdd({ ...add, due_on: e.target.value })} /></label>
