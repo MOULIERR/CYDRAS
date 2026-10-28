@@ -82,7 +82,7 @@ export function Dispatch() {
       const a = col(minOf(j.starts_at)), b = Math.max(a + 1, col(minOf(j.ends_at)));
       let L = lanes.findIndex((e) => e <= a); if (L < 0) { L = lanes.length; lanes.push(0); } lanes[L] = b;
       const ct = catOf(cats, j.category);
-      cells.push(<button key={`b${r.id}${j.id}`} className={`blk ${r.id === '_un' ? 'un' : ''}`} data-drag={mgr ? j.id : undefined} data-from={r.id} onClick={() => nav(`/jobs?open=${j.id}`)}
+      cells.push(<button key={`b${r.id}${j.id}`} className={`blk ${r.id === '_un' ? 'un' : ''}`} data-drag={mgr ? j.id : undefined} data-from={r.id} onClick={() => nav(`/job/${j.id}`)}
         style={{ gridRow: gr, gridColumn: `${a}/${b}`, ['--cc' as any]: ct.c, marginTop: L * 58 }} title={`${j.customers?.name} · ${hm(j.starts_at)}–${hm(j.ends_at)}`}>
         <b>{j.customers?.name}</b>{ct.n}{j.parent_job_id ? ` · Visit ${j.visit_number}` : ''} · {hm(j.starts_at)}</button>);
     });

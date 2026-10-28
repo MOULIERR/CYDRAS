@@ -51,7 +51,7 @@ export function Dashboard() {
     check(await supabase.from('job_assignments').upsert({ job_id: jobId, member_id: memberId, company_id: c, deleted_at: null }));
     reload();
   }
-  const go = (id: string) => nav(`/jobs?open=${id}`);
+  const go = (id: string) => nav(`/job/${id}`);
 
   return (
     <>

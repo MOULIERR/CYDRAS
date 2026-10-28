@@ -1,4 +1,5 @@
 // Shared look pieces, same as the mockup: category tags, status pills, avatars, money and time.
+import { useEffect, useState } from 'react';
 import { supabase, check } from './supabase';
 import { useLive } from './live';
 
@@ -50,4 +51,39 @@ export function useCompany(companyId: string) {
 /** Amount still owed on an invoice from its payments. */
 export function paidOn(pays: any[]) {
   return pays.filter((p) => p.status === 'succeeded' && !p.voided_at).reduce((a, p) => a + Number(p.amount) - Number(p.refunded_amount ?? 0), 0);
+}
+
+/** A pop-up box like the mockup's (title, body, Cancel/Save). */
+export function Modal({ title, children, onClose, onSave, saveLabel = 'Save', busy }: { title: string; children: React.ReactNode; onClose: () => void; onSave?: () => void; saveLabel?: string; busy?: boolean }) {
+  return (
+    <div className="mbg" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.35)', zIndex: 60, display: 'grid', placeItems: 'center', padding: 16 }}>
+      <div className="card" role="dialog" aria-label={title} style={{ width: '100%', maxWidth: 560, maxHeight: '90vh', overflow: 'auto' }}>
+        <div className="cardh"><h2>{title}</h2><button className="btn sm ghost" onClick={onClose} aria-label="Close">✕</button></div>
+        {children}
+        <div className="row" style={{ justifyContent: 'flex-end' }}><button className="btn" onClick={onClose}>Cancel</button>{onSave && <button className="btn pri" disabled={busy} onClick={onSave}>{saveLabel}</button>}</div>
+      </div>
+    </div>
+  );
+}
+
+/** Typed time like 7:05, 730, 2pm. Returns minutes after midnight, or null. */
+export function parseTime(s: string): number | null {
+  const x = String(s || '').trim().toLowerCase().replace(/\s+|\./g, '');
+  if (x === 'noon') return 720;
+  const m = x.match(/^(\d{1,2})(?::?(\d{2}))?(a|am|p|pm)?$/); if (!m) return null;
+  let h = +m[1]; const mi = +(m[2] || 0); if (mi > 59 || h > 23) return null;
+  if (m[3]) { if (h < 1 || h > 12) return null; h = (h % 12) + (m[3][0] === 'p' ? 12 : 0); } else if (h < 13 && h !== 12 && h <= 5) h += 12;
+  return h * 60 + mi;
+}
+export const fmtMin = (m: number) => { const h = Math.floor(m / 60) % 24, mm = m % 60; return `${h % 12 || 12}:${String(mm).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`; };
+export const minOfIso = (iso: string) => { const d = new Date(iso); return d.getHours() * 60 + d.getMinutes(); };
+export const isoAt = (day: string, min: number) => { const d = dayStart(day); d.setMinutes(min); return d.toISOString(); };
+
+/** A time box you type into (7:05, 730, 2pm). */
+export function TimeInput({ value, onChange, id, label }: { value: number; onChange: (m: number) => void; id: string; label: string }) {
+  const [txt, setTxt] = useState(fmtMin(value));
+  const [bad, setBad] = useState(false);
+  useEffect(() => setTxt(fmtMin(value)), [value]);
+  return <label className="field" htmlFor={id}>{label}<input id={id} className={`tin${bad ? ' bad' : ''}`} value={txt} placeholder="e.g. 7:30 AM" autoComplete="off"
+    onChange={(e) => setTxt(e.target.value)} onBlur={() => { const m = parseTime(txt); if (m == null) { setBad(true); return; } setBad(false); setTxt(fmtMin(m)); onChange(m); }} /></label>;
 }

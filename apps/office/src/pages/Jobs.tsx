@@ -1,5 +1,6 @@
 // Book jobs and assign techs. The tech gets a push notification when they're put on a job.
 import { Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase, check } from '../supabase';
 import { useSession, isManager } from '../session';
 import { useLive } from '../live';
@@ -93,7 +94,7 @@ export function Jobs() {
           {(data?.jobs ?? []).map((j) => { const crew = (j.job_assignments ?? []).filter((a: any) => !a.deleted_at); return (
             <Fragment key={j.id}><tr>
               <td>{new Date(j.starts_at).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</td>
-              <td><b>{j.customers?.name}</b><br /><span className="muted">#{j.number}</span></td><td>{j.category ?? j.type}{j.parent_job_id ? <span className="pill"> Visit {j.visit_number}</span> : null}<br /><span className="muted">{j.visit_note ?? j.type}</span></td>
+              <td><Link to={`/job/${j.id}`}><b>{j.customers?.name}</b></Link><br /><span className="muted">#{j.number}</span></td><td>{j.category ?? j.type}{j.parent_job_id ? <span className="pill"> Visit {j.visit_number}</span> : null}<br /><span className="muted">{j.visit_note ?? j.type}</span></td>
               <td>{crew.map((a: any) => <div key={a.member_id}>{name(a.member_id)} {mgr && <button className="danger" onClick={() => unassign(j.id, a.member_id)}>×</button>}</div>)}
                 {mgr && <select value="" onChange={(e) => e.target.value && assign(j.id, e.target.value)} style={{ marginTop: 4 }}><option value="">+ Add tech</option>{data!.techs.filter((x) => !crew.some((a: any) => a.member_id === x.id)).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select>}</td>
               <td><span className={`pill ${j.status === 'done' ? 'ok' : j.status === 'scheduled' ? '' : 'go'}`}>{j.status.replace(/_/g, ' ')}</span></td>
