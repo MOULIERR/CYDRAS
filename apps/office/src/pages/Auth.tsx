@@ -33,9 +33,9 @@ export function Signup() {
     setBusy(true);
     try {
       if (!session) {
-        const { data, error } = await supabase.auth.signUp({ email: f.email.trim(), password: f.pw });
+        const { data, error } = await supabase.auth.signUp({ email: f.email.trim(), password: f.pw, options: { emailRedirectTo: `${location.origin}/signup` } });
         if (error) throw error;
-        if (!data.session) { setErr('Check your email, tap the link, then sign in to finish.'); return; }
+        if (!data.session) { setErr('Check your email and tap the link. It brings you back here to finish setting up your company.'); return; }
       }
       const { error } = await supabase.rpc('create_company', { p_name: f.company.trim(), p_owner_name: f.name.trim(), p_plan: f.plan });
       if (error) throw error;
