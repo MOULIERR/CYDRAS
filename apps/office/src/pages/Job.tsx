@@ -116,6 +116,8 @@ export function Job() {
 
         <Summary root={root} onSave={(s) => run(async () => check(await supabase.from('jobs').update({ summary: s }).eq('id', root.id)))} />
       </div><div className="colB">
+        {can('estimates') && <div className="card"><div className="cardh"><h3>Estimate</h3><Link className="btn sm" to={`/estimates?new=1&c=${job.customer_id}&job=${root.id}`}>+ Make estimate</Link></div>
+          <span className="s">Give the customer choices, like Repair vs. Replace, or Good / Better / Best. When they approve, the option goes on this job's invoice.</span></div>}
         <div className="card"><div className="cardh"><h3>Checklists</h3>{mgr && <button className="btn sm" onClick={() => setModal('checklist')}>+ Add</button>}</div>
           {jcl.length ? jcl.map((x) => { const cl = cls.find((y) => y.id === x.checklist_id); if (!cl) return null; const items = cl.items ?? []; const done = items.filter((_: any, i: number) => x.answers?.[i] != null && x.answers[i] !== '' && x.answers[i] !== false).length;
             return <div key={x.checklist_id} className="prow"><div className="t"><b>{cl.name}</b><br /><span className="s">{done} of {items.length} done</span></div>

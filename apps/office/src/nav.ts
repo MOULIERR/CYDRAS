@@ -19,7 +19,7 @@ export const NAV: [string, NavItem[]][] = [
   ['Customers', [
     { key: 'customers', label: 'Customers', path: '/customers', about: 'Every customer, their sites, equipment and history.' },
     { key: 'invoices', label: 'Invoices & payments', path: '/invoices', about: 'Every invoice, paid or not, find by customer name. Refunds and fixes.' },
-    { key: 'estimates', label: 'Estimates', about: 'Sent, approved, pending and declined estimates.' },
+    { key: 'estimates', label: 'Estimates', path: '/estimates', about: 'Sent, approved, pending and declined estimates.' },
     { key: 'financing', label: 'Financing', about: 'Offer monthly payments on big jobs.' },
     { key: 'reviews', label: 'Review requests', about: 'Ask happy customers for a Google review after the job.' },
     { key: 'marketing', label: 'Marketing', about: 'Texts and emails to past customers, with opt-outs.' },
