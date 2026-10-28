@@ -20,6 +20,8 @@ import { Invoices } from './pages/Invoices';
 import { Estimates } from './pages/Estimates';
 import { Categories, Checklists } from './pages/Setup';
 import { Crew, Person } from './pages/Crew';
+import { ShopInventory, TechInventory } from './pages/Inventory';
+import { Inbox } from './pages/Inbox';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -82,6 +84,9 @@ function Shell() {
             <Route path="/checklists" element={<Checklists />} />
             <Route path="/crew" element={<Crew />} />
             <Route path="/crew/:id" element={<Person />} />
+            <Route path="/shopinv" element={<ShopInventory />} />
+            <Route path="/techinv" element={<TechInventory />} />
+            <Route path="/inbox" element={<Inbox />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customer/:id" element={<Customer />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}

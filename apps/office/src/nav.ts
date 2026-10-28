@@ -12,9 +12,9 @@ export const NAV: [string, NavItem[]][] = [
     { key: 'tasks', label: 'Team tasks', about: 'To-dos for anyone on the team, with due dates.' },
     { key: 'timesheets', label: 'Timesheets', path: '/timesheets', mgr: true, about: 'Hours from the clock-in button. Approve or fix with a reason.' },
     { key: 'scorecards', label: 'Tech scorecards', about: 'Revenue, callbacks, reviews and commission per tech.' },
-    { key: 'shopinv', label: 'Shop inventory', about: 'Parts in the shop. Truck stock is pulled from here.' },
-    { key: 'techinv', label: 'Tech inventory', about: 'What is on each truck, low stock, reorders.' },
-    { key: 'inbox', label: 'Inbox', about: 'Customer texts and team chat in one place.' },
+    { key: 'shopinv', label: 'Shop inventory', path: '/shopinv', about: 'Parts in the shop. Truck stock is pulled from here.' },
+    { key: 'techinv', label: 'Tech inventory', path: '/techinv', about: 'What is on each truck, low stock, reorders.' },
+    { key: 'inbox', label: 'Inbox', path: '/inbox', about: 'Customer texts and team chat in one place.' },
   ]],
   ['Customers', [
     { key: 'customers', label: 'Customers', path: '/customers', about: 'Every customer, their sites, equipment and history.' },

@@ -88,7 +88,7 @@ export function Dashboard() {
             : <div className="empty">No techs yet. Add your crew in <Link to="/team">Team & permissions</Link>.</div>}
         </div>
       </div><div className="colB">
-        <div className="card"><div className="cardh"><h3>Messages</h3><Link className="btn sm" to="/soon/inbox">Inbox</Link></div>
+        <div className="card"><div className="cardh"><h3>Messages</h3><Link className="btn sm" to="/inbox">Inbox</Link></div>
           {data.msgs.length ? data.msgs.map((m) => <div className="alert" key={m.id}><span className="dot" style={{ background: m.direction === 'in' ? 'var(--accent)' : 'var(--line)' }} /><span style={{ flex: 1 }}><b>{m.customers?.name ?? 'Customer'}</b><br /><span className="s">{m.body}</span></span></div>)
             : <div className="empty">No texts yet. Customer replies show up here.</div>}
         </div>
