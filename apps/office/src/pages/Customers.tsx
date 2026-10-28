@@ -26,7 +26,7 @@ export function Customers() {
   const list = (data ?? []).filter((x) => !q || x.name.toLowerCase().includes(q.toLowerCase()));
   return (
     <>
-      <h1>Customers</h1>
+      <div className="pageh"><div><p className="eyebrow">Customers</p><h1>Customers</h1></div></div>
       <form className="card" onSubmit={add}>
         <h2>Add a customer</h2>
         <div className="grid">
@@ -44,12 +44,12 @@ export function Customers() {
       </form>
       <input placeholder="Search customers" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="card">
-        <table><thead><tr><th>Name</th><th>Phone</th><th>Texts</th><th>Address</th></tr></thead><tbody>
+        <div className="tscroll"><table><thead><tr><th>Name</th><th>Phone</th><th>Texts</th><th>Address</th></tr></thead><tbody>
           {list.map((x) => { const ph = (x.customer_contacts ?? []).find((p: any) => p.kind === 'phone'); return (
             <tr key={x.id}><td><b>{x.name}</b><br /><span className="muted">{x.kind}{x.contact ? ` · ${x.contact}` : ''}</span></td><td>{ph?.value ?? '—'}</td>
               <td>{!ph ? '—' : ph.opted_out_at ? <span className="pill bad">Replied STOP</span> : ph.sms_consent_at ? <span className="pill ok">OK to text</span> : <span className="pill">No consent yet</span>}</td>
               <td>{(x.sites ?? []).find((s: any) => s.is_primary)?.address ?? (x.sites ?? [])[0]?.address ?? '—'}</td></tr>); })}
-        </tbody></table>
+        </tbody></table></div>
       </div>
     </>
   );

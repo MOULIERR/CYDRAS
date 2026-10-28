@@ -30,7 +30,7 @@ export function Billing() {
   const label: Record<string, string> = { trialing: `Free trial · ${days} days left`, active: 'Active', past_due: 'Payment failed — update your card', canceled: 'Canceled', paused: 'Paused' };
   return (
     <>
-      <h1>Billing</h1>
+      <div className="pageh"><div><p className="eyebrow">Owner</p><h1>Billing</h1></div></div>
       {err && <div className="err">{err}</div>}
       <div className="card">
         <h2>Your Cydras plan</h2>

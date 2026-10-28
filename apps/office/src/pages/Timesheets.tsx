@@ -43,7 +43,7 @@ export function Timesheets() {
   (data?.entries ?? []).forEach((e) => byPerson.set(e.member_id, [...(byPerson.get(e.member_id) ?? []), e]));
   return (
     <>
-      <h1>Timesheets</h1>
+      <div className="pageh"><div><p className="eyebrow">Work</p><h1>Timesheets</h1></div></div>
       <div className="row">
         <button onClick={() => setWeek(new Date(week.getTime() - 7 * 86400000))}>← Week</button>
         <b>Week of {week.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</b>
@@ -62,13 +62,13 @@ export function Timesheets() {
               <span><b>{hm(mins)}</b>{pay && <> · ${pay.pay.toFixed(2)}{pay.otMinutes > 0 ? ` (incl. ${hm(pay.otMinutes)} overtime)` : ''}</>}</span>
               {waiting.length > 0 && <button className="pri" onClick={() => approve(waiting)}>Approve week</button>}
             </div>
-            <table><thead><tr><th>In</th><th>Out</th><th>Break</th><th>Worked</th><th>Miles</th><th>Status</th><th></th></tr></thead><tbody>
+            <div className="tscroll"><table><thead><tr><th>In</th><th>Out</th><th>Break</th><th>Worked</th><th>Miles</th><th>Status</th><th></th></tr></thead><tbody>
               {list.map((e) => (
                 <tr key={e.id}><td>{t(e.clock_in)}</td><td>{e.clock_out ? t(e.clock_out) : <span className="pill go">Clocked in</span>}</td><td>{e.break_minutes}m</td><td>{hm(workedMinutes(e))}</td><td>{e.miles}</td>
                   <td>{e.approved_at ? <span className="pill ok">Approved</span> : 'Waiting'}{(e.edits ?? []).length > 0 && <div className="muted" title={(e.edits ?? []).map((x: any) => `${x.by}: ${x.reason}`).join('\n')}>Fixed {(e.edits ?? []).length}×</div>}</td>
                   <td>{e.clock_out && <button onClick={() => setFix({ id: e.id, clock_in: local(e.clock_in), clock_out: local(e.clock_out), reason: '' })}>Fix time</button>}</td></tr>
               ))}
-            </tbody></table>
+            </tbody></table></div>
           </div>
         );
       })}

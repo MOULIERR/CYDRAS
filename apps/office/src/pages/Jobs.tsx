@@ -65,7 +65,7 @@ export function Jobs() {
   const name = (id: string) => data?.techs.find((t) => t.id === id)?.name ?? '';
   return (
     <>
-      <h1>Jobs & dispatch</h1>
+      <div className="pageh"><div><p className="eyebrow">Work</p><h1>Jobs & dispatch</h1></div></div>
       {mgr && data && (
         <form className="card" onSubmit={book}>
           <h2>Book a job</h2>
@@ -87,7 +87,7 @@ export function Jobs() {
         <button onClick={() => setDay(new Date(day.getTime() + 7 * 86400000))}>Week →</button>
       </div>
       <div className="card">
-        <table><thead><tr><th>When</th><th>Customer</th><th>Work</th><th>Crew</th><th>Status</th><th>Private notes</th></tr></thead><tbody>
+        <div className="tscroll"><table><thead><tr><th>When</th><th>Customer</th><th>Work</th><th>Crew</th><th>Status</th><th>Private notes</th></tr></thead><tbody>
           {(data?.jobs ?? []).map((j) => { const crew = (j.job_assignments ?? []).filter((a: any) => !a.deleted_at); return (
             <Fragment key={j.id}><tr>
               <td>{new Date(j.starts_at).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</td>
@@ -115,7 +115,7 @@ export function Jobs() {
             </td></tr>}
             </Fragment>); })}
           {!data?.jobs.length && <tr><td colSpan={6} className="muted">No jobs this week.</td></tr>}
-        </tbody></table>
+        </tbody></table></div>
       </div>
     </>
   );

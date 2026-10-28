@@ -26,7 +26,7 @@ export function Dashboard() {
   const lastPing = (id: string) => data.pings.find((p) => p.member_id === id);
   return (
     <>
-      <h1>Today</h1>
+      <div className="pageh"><div><p className="eyebrow">Dashboard</p><h1>Today</h1></div></div>
       <div className="grid">
         <div className="card kpi"><span className="muted">Jobs today</span><b>{data.jobs.length}</b><span className="muted">{data.jobs.filter((j) => j.status === 'done').length} done</span></div>
         <div className="card kpi"><span className="muted">Needs a tech</span><b style={{ color: needs.length ? 'var(--bad)' : undefined }}>{needs.length}</b></div>
@@ -34,24 +34,24 @@ export function Dashboard() {
       </div>
       <div className="card">
         <h2>Crew right now</h2>
-        <table><thead><tr><th>Person</th><th>Clocked in</th><th>Worked</th><th>Last seen</th></tr></thead><tbody>
+        <div className="tscroll"><table><thead><tr><th>Person</th><th>Clocked in</th><th>Worked</th><th>Last seen</th></tr></thead><tbody>
           {data.open.map((o) => { const p = lastPing(o.member_id); return (
             <tr key={o.member_id}><td><b>{name(o.member_id)}</b></td><td>{t(o.clock_in)}{o.on_break_since ? ' · on break' : ''}</td><td>{hm(workedMinutes(o))}</td>
               <td>{p ? <a target="_blank" rel="noreferrer" href={`https://maps.google.com/?q=${p.lat},${p.lng}`}>{t(p.at)} · map</a> : <span className="muted">No location yet</span>}</td></tr>); })}
           {!data.open.length && <tr><td colSpan={4} className="muted">Nobody is clocked in.</td></tr>}
-        </tbody></table>
+        </tbody></table></div>
         <span className="muted">Location is only shared while someone is clocked in.</span>
       </div>
       <div className="card">
         <h2>Today's jobs</h2>
-        <table><thead><tr><th>Time</th><th>Customer</th><th>Work</th><th>Crew</th><th>Status</th></tr></thead><tbody>
+        <div className="tscroll"><table><thead><tr><th>Time</th><th>Customer</th><th>Work</th><th>Crew</th><th>Status</th></tr></thead><tbody>
           {data.jobs.map((j) => (
             <tr key={j.id}><td>{t(j.starts_at)}–{t(j.ends_at)}</td><td><b>{j.customers?.name}</b><br /><span className="muted">#{j.number}</span></td><td>{j.category ?? j.type}</td>
               <td>{(j.job_assignments ?? []).filter((a: any) => !a.deleted_at).map((a: any) => name(a.member_id)).join(', ') || <span className="pill bad">Needs a tech</span>}</td>
               <td><span className={`pill ${j.status === 'done' ? 'ok' : j.status === 'scheduled' ? '' : 'go'}`}>{j.status.replace(/_/g, ' ')}</span></td></tr>
           ))}
           {!data.jobs.length && <tr><td colSpan={5} className="muted">No jobs today.</td></tr>}
-        </tbody></table>
+        </tbody></table></div>
       </div>
     </>
   );
