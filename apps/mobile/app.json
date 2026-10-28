@@ -71,8 +71,8 @@
       ]
     ],
     "extra": {
-      "supabaseUrl": "https://YOUR-PROJECT.supabase.co",
-      "supabaseAnonKey": "YOUR-ANON-KEY",
+      "supabaseUrl": "https://jhcyitjmulbfezkrdzgt.supabase.co",
+      "supabaseAnonKey": "sb_publishable_gJDo4KaXNoFRdjZbKjEtrg_SG4m1bnA",
       "officeUrl": "https://office.cydras.app"
     }
   }

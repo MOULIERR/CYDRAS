@@ -1,11 +1,16 @@
 {
   "name": "cydras",
   "private": true,
-  "workspaces": ["packages/*", "apps/office"],
+  "workspaces": [
+    "packages/*",
+    "apps/office"
+  ],
   "scripts": {
     "test": "vitest run",
     "test:db": "vitest run tests/db",
-    "typecheck": "tsc -p packages/core && tsc -p supabase/functions"
+    "typecheck": "tsc -p packages/core && tsc -p supabase/functions",
+    "db-setup": "npx --yes supabase@latest login && npx --yes supabase@latest link --project-ref jhcyitjmulbfezkrdzgt && npx --yes supabase@latest db push",
+    "db-update": "npx --yes supabase@latest db push"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11",

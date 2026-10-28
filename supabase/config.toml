@@ -1,5 +1,5 @@
 # Supabase project settings for Cydras.
-project_id = "cydras"
+project_id = "jhcyitjmulbfezkrdzgt"
 
 [auth]
 site_url = "https://office.cydras.app"
