@@ -225,3 +225,6 @@ body.dragging,body.dragging *{cursor:grabbing!important}
 .authwrap input:not([type=checkbox]),.authwrap select{min-height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 11px;background:var(--surface);font-size:15px;width:100%}
 .authwrap button{min-height:46px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;cursor:pointer}
 .authwrap button.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.maptech{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font:800 12px var(--body);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.mapjob{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:#fff;color:#1f242c;font:800 14px var(--body);border:2px solid #1f242c;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.leaflet-container{font:inherit;z-index:0}

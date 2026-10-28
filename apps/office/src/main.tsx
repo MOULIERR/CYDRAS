@@ -23,6 +23,9 @@ import { Crew, Person } from './pages/Crew';
 import { ShopInventory, TechInventory } from './pages/Inventory';
 import { Inbox } from './pages/Inbox';
 import { Tasks } from './pages/Tasks';
+import { AllSettings, Alerts, Account, Supply, Docs, Sheets, Help, Refer, Legal } from './pages/Settings';
+import { Revenue, Costing, Reports, Import, Scorecards } from './pages/Owner';
+import { LiveMap } from './pages/LiveMap';
 import { NAV, type NavItem } from './nav';
 
 function Shell() {
@@ -67,7 +70,7 @@ function Shell() {
           <label className="search"><span aria-hidden="true">🔎</span><input placeholder="Search customers, jobs, invoices" aria-label="Search" onKeyDown={(e) => { if (e.key === 'Enter') nav(`/customers?q=${encodeURIComponent((e.target as HTMLInputElement).value)}`); }} /></label>
           {mgr && <Link className="btn pri" to="/jobs?new=1">+ New appointment</Link>}
           <Link className="btn" to="/tasks?new=1">+ Task</Link>
-          <Link className="btn" to="/soon/allsettings" aria-label="Settings">⚙ Settings</Link>
+          <Link className="btn" to="/allsettings" aria-label="Settings">⚙ Settings</Link>
           <span style={{ flex: 1 }} />
           <span className="rolesw">Signed in as <b style={{ color: 'var(--ink)' }}>{member.name}</b></span>
         </header>
@@ -89,11 +92,26 @@ function Shell() {
             <Route path="/techinv" element={<TechInventory />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/tasks" element={<Tasks />} />
+            <Route path="/allsettings" element={<AllSettings />} />
+            <Route path="/settings" element={<Alerts />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/supply" element={<Supply />} />
+            <Route path="/docs" element={<Docs />} />
+            <Route path="/sheets" element={<Sheets />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/refer" element={<Refer />} />
+            <Route path="/legal" element={<Legal />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customer/:id" element={<Customer />} />
             {mgr && <Route path="/timesheets" element={<Timesheets />} />}
             {mgr && <Route path="/team" element={<Team />} />}
             {owner && <Route path="/billing" element={<Billing />} />}
+            {mgr && <Route path="/live" element={<LiveMap />} />}
+            {mgr && <Route path="/scorecards" element={<Scorecards />} />}
+            {owner && <Route path="/revenue" element={<Revenue />} />}
+            {owner && <Route path="/costing" element={<Costing />} />}
+            {owner && <Route path="/reports" element={<Reports />} />}
+            {owner && <Route path="/import" element={<Import />} />}
             <Route path="/soon/:key" element={<Soon />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
@@ -103,6 +121,8 @@ function Shell() {
     </div>
   );
 }
+
+try { const t = localStorage.getItem('cyd_theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch { /* ignore */ }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode><SessionProvider><BrowserRouter><Shell /></BrowserRouter></SessionProvider></StrictMode>,
