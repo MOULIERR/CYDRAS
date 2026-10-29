@@ -27,8 +27,7 @@ TaskManager.defineTask(TASK, async ({ data, error }) => {
 export async function askLocation(): Promise<'always' | 'while-using' | 'denied'> {
   const fg = await Location.requestForegroundPermissionsAsync();
   if (fg.status !== 'granted') return 'denied';
-  const bg = await Location.requestBackgroundPermissionsAsync();
-  return bg.status === 'granted' ? 'always' : 'while-using';
+  try { const bg = await Location.requestBackgroundPermissionsAsync(); return bg.status === 'granted' ? 'always' : 'while-using'; } catch { return 'while-using'; }
 }
 
 export async function startShiftTracking(company: string) {
@@ -36,7 +35,21 @@ export async function startShiftTracking(company: string) {
   store()?.setItem(KEY, company);
   const perm = await askLocation();
   if (perm === 'denied') return perm;
-  if (await Location.hasStartedLocationUpdatesAsync(TASK)) return perm;
+  try {
+    if (await Location.hasStartedLocationUpdatesAsync(TASK)) return perm;
+    await startBackground();
+  } catch {
+    // Expo Go (the test app) can't share location in the background: share it while the app is open instead.
+    fg?.remove();
+    fg = await Location.watchPositionAsync({ accuracy: Location.Accuracy.Balanced, timeInterval: 60_000, distanceInterval: 150 }, (l) => {
+      void call('record_ping', { p_company: company, p_lat: l.coords.latitude, p_lng: l.coords.longitude, p_accuracy: l.coords.accuracy ?? null, p_speed: l.coords.speed ?? null, p_at: new Date(l.timestamp).toISOString() });
+    });
+  }
+  return perm;
+}
+
+let fg: Location.LocationSubscription | null = null;
+async function startBackground() {
   await Location.startLocationUpdatesAsync(TASK, {
     accuracy: Location.Accuracy.Balanced,
     timeInterval: 60_000,
@@ -47,11 +60,11 @@ export async function startShiftTracking(company: string) {
     showsBackgroundLocationIndicator: true,
     foregroundService: { notificationTitle: 'Cydras', notificationBody: 'Sharing your location while you are clocked in', notificationColor: '#F26B1D' },
   });
-  return perm;
 }
 
 export async function stopShiftTracking() {
-  if (await Location.hasStartedLocationUpdatesAsync(TASK)) await Location.stopLocationUpdatesAsync(TASK);
+  fg?.remove(); fg = null;
+  try { if (await Location.hasStartedLocationUpdatesAsync(TASK)) await Location.stopLocationUpdatesAsync(TASK); } catch { /* not running */ }
   companyId = null;
   store()?.removeItem(KEY);
 }

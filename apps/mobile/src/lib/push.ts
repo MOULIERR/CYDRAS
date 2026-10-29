@@ -5,13 +5,14 @@ import { Platform } from 'react-native';
 import { router } from 'expo-router';
 import { supabase } from './supabase';
 import { config } from './config';
+import { inExpoGo } from './env';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
 });
 
 export async function registerForPush(userId: string): Promise<string | null> {
-  if (!Device.isDevice) return null;
+  if (!Device.isDevice || inExpoGo) return null; // Expo Go (the test app) can't get push alerts
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', { name: 'Jobs and messages', importance: Notifications.AndroidImportance.HIGH });
   }

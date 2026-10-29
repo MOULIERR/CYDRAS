@@ -1,61 +1,56 @@
-// Account, sync status, Cydras billing (owner), and sign out.
-import { useEffect, useState } from 'react';
+// More: you, your work tools, money (managers), settings, help, sign out. Like the phone mockup.
 import { Alert, View } from 'react-native';
+import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useSession } from '../../src/lib/session';
-import { supabase, callFunction } from '../../src/lib/supabase';
-import { useSyncState, syncNow, failedChanges, dismiss } from '../../src/lib/sync';
-import { Screen, Card, H2, Small, Button, C } from '../../src/ui/kit';
+import { workedMinutes, hm } from '@cydras/core';
+import { useSession, isManager } from '../../src/lib/session';
+import { useRows, useSyncState } from '../../src/lib/sync';
+import { useCompany } from '../../src/lib/data';
 import { config } from '../../src/lib/config';
+import { Screen, Card, H2, T, Eyebrow, Menu, MenuItem, Avatar } from '../../src/ui/kit';
+
+const ROLE: Record<string, string> = { owner: 'Owner', supervisor: 'Supervisor', tech: 'Tech', apprentice: 'Apprentice' };
 
 export default function More() {
-  const { member, session, signOut } = useSession();
+  const { member, signOut } = useSession();
   const s = useSyncState();
-  const [failed, setFailed] = useState<any[]>([]);
-  const [sub, setSub] = useState<any>(null);
-  useEffect(() => { failedChanges().then(setFailed); }, [s.failed, s.version]);
-  useEffect(() => {
-    if (member?.role === 'owner') supabase.from('subscriptions').select('*').eq('company_id', member.company_id).maybeSingle().then(({ data }) => setSub(data));
-  }, [member]);
-
-  async function billing(plan?: string) {
-    try {
-      const r = await callFunction<{ url: string }>(plan ? 'billing-checkout' : 'billing-portal', { company_id: member!.company_id, plan });
-      await WebBrowser.openBrowserAsync(r.url);
-    } catch (e) { Alert.alert('Billing', (e as Error).message); }
-  }
-  const daysLeft = sub?.trial_ends_at ? Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / 86400000)) : 0;
-
+  const company = useCompany();
+  const open = useRows<any>('time_entries', (e) => e.member_id === member?.id && !e.clock_out, [member?.id])[0];
+  const tasks = useRows<any>('tasks', (x) => x.assigned_to === member?.id && !x.done_at, [member?.id]);
+  if (!member) return null;
+  const mgr = isManager(member), owner = member.role === 'owner';
+  const web = (p: string) => WebBrowser.openBrowserAsync(`${config.officeUrl}${p}`);
+  const out = () => Alert.alert('Log out?', s.pending ? `${s.pending} change${s.pending > 1 ? 's are' : ' is'} not sent yet. Get signal first, or they will be lost.` : 'You will need your email and password to get back in.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Log out', style: 'destructive', onPress: signOut }]);
   return (
     <Screen>
-      <Card>
-        <H2>{member?.name}</H2>
-        <Small>{session?.user.email} · {member?.role}</Small>
+      <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <Avatar name={member.name} size={60} />
+        <View style={{ flex: 1 }}><H2>{member.name}</H2><T s>{company?.name ?? ''} · {ROLE[member.role]}</T></View>
       </Card>
-      <Card>
-        <H2>Sync</H2>
-        <Small>{s.online ? 'Online' : 'No signal'} · {s.pending} waiting to send · last synced {s.lastSync ? s.lastSync.toLocaleTimeString() : 'not yet'}</Small>
-        <Button title={s.syncing ? 'Syncing…' : 'Sync now'} kind="secondary" onPress={syncNow} busy={s.syncing} />
-        {failed.map((f) => (
-          <View key={f.seq} style={{ gap: 6 }}>
-            <Small color={C.bad}>Not saved: {f.error}</Small>
-            <Button title="OK, throw it away" kind="danger" onPress={() => dismiss(f.seq)} />
-          </View>
-        ))}
-      </Card>
-      {member?.role === 'owner' && sub && (
-        <Card>
-          <H2>Your Cydras plan</H2>
-          <Small>{sub.status === 'trialing' ? `Free trial · ${daysLeft} day${daysLeft === 1 ? '' : 's'} left` : sub.status === 'active' ? `${sub.plan} plan · active` : sub.status === 'past_due' ? 'Payment failed. Update your card.' : 'Canceled'}</Small>
-          {sub.stripe_subscription_id ? <Button title="Manage billing" kind="secondary" onPress={() => billing()} /> : <>
-            <Button title="Pick Solo · $49/mo" kind="secondary" onPress={() => billing('solo')} />
-            <Button title="Pick Team · $125/mo" onPress={() => billing('team')} />
-            <Button title="Pick Pro · $249/mo" kind="secondary" onPress={() => billing('pro')} />
-          </>}
-        </Card>
-      )}
-      <Button title="Open the office site" kind="secondary" onPress={() => WebBrowser.openBrowserAsync(config.officeUrl)} />
-      <Button title="Sign out" kind="danger" onPress={() => Alert.alert('Sign out?', s.pending ? `${s.pending} change${s.pending > 1 ? 's are' : ' is'} not sent yet. Get signal first, or they will be lost.` : 'You will need your email and password to get back in.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Sign out', style: 'destructive', onPress: signOut }])} />
+      <View><Eyebrow style={{ marginBottom: 8 }}>Work</Eyebrow><Menu>
+        <MenuItem icon="list" title="Team tasks" sub={tasks.length ? `${tasks.length} open for you` : 'Nothing on your list'} onPress={() => router.push('/tasks')} />
+        <MenuItem icon="clock" title="Timesheet" sub={open ? `Clocked in · ${hm(workedMinutes(open))} today` : 'Not clocked in'} onPress={() => router.push('/time')} />
+        <MenuItem icon="truck" title="My truck" sub="Parts on your truck" onPress={() => router.push('/truck')} />
+        <MenuItem icon="tag" title="Price book" sub="Prices for every task" onPress={() => router.push('/pricebook')} />
+        <MenuItem icon="chat" title="Team chat" onPress={() => router.push('/teamchat')} last />
+      </Menu></View>
+      {mgr ? <View><Eyebrow style={{ marginBottom: 8 }}>Office</Eyebrow><Menu>
+        <MenuItem icon="money" title="Unpaid invoices" sub="Who owes you" onPress={() => router.push('/unpaid')} />
+        <MenuItem icon="calendar" title="New appointment" onPress={() => router.push('/newjob')} />
+        <MenuItem icon="map" title="Live map" sub="Opens the office website" onPress={() => web('/live')} />
+        {owner ? <MenuItem icon="chart" title="Reports & revenue" sub="Opens the office website" onPress={() => web('/revenue')} /> : null}
+        <MenuItem icon="globe" title="Office website" sub="Dispatch board, team, settings and more" onPress={() => web('/')} last />
+      </Menu></View> : null}
+      <View><Eyebrow style={{ marginBottom: 8 }}>Settings</Eyebrow><Menu>
+        <MenuItem icon="gear" title="Preferences" sub="Look, maps app, Today layout" onPress={() => router.push('/settings')} />
+        <MenuItem icon="refresh" title="Sync" sub={s.online ? (s.pending ? `${s.pending} waiting to send` : 'Everything is sent') : 'No signal'} onPress={() => router.push('/sync')} last />
+      </Menu></View>
+      <Menu>
+        <MenuItem icon="gift" title="Refer a friend" sub="Give a free month, get a free month" onPress={() => web('/refer')} />
+        <MenuItem icon="help" title="Help & support" onPress={() => router.push('/help')} />
+        <MenuItem icon="doc" title="About & legal" sub="Terms, privacy, version" onPress={() => web('/legal')} last />
+      </Menu>
+      <Menu><MenuItem icon="out" title="Log out" danger onPress={out} last /></Menu>
     </Screen>
   );
 }

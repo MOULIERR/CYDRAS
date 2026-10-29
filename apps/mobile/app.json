@@ -73,7 +73,7 @@
     "extra": {
       "supabaseUrl": "https://jhcyitjmulbfezkrdzgt.supabase.co",
       "supabaseAnonKey": "sb_publishable_gJDo4KaXNoFRdjZbKjEtrg_SG4m1bnA",
-      "officeUrl": "https://office.cydras.app"
+      "officeUrl": "https://cydras.vercel.app"
     }
   }
 }

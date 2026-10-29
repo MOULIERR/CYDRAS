@@ -9,7 +9,7 @@ import { supabaseRemote } from './remote';
 export const TABLES: TableSpec[] = [
   'companies', 'members', 'customers', 'customer_contacts', 'sites', 'units', 'price_items', 'jobs',
   { name: 'job_assignments', key: ['job_id', 'member_id'] }, 'job_lines', 'estimates', 'invoices', 'payments', 'checklists',
-  { name: 'job_checklists', key: ['job_id', 'checklist_id'] }, 'time_entries', 'stock_locations', 'parts', { name: 'stock', key: ['location_id', 'part_id'] },
+  { name: 'job_checklists', key: ['job_id', 'checklist_id'] }, 'time_entries', 'stock_locations', 'parts', { name: 'stock', key: ['location_id', 'part_id'] }, 'tasks',
 ];
 
 type State = { ready: boolean; online: boolean; syncing: boolean; pending: number; failed: number; lastSync: Date | null; version: number };
@@ -53,9 +53,9 @@ export async function syncNow() {
 }
 
 /** Save a change: shows right away on this phone, goes to the server when there's signal. */
-export async function save(table: string, row: Row, key?: string[]) {
+export async function save(table: string, row: Record<string, unknown>, key?: string[]) {
   const e = engine ?? (await startSync());
-  const out = await e.save(table, row, key);
+  const out = await e.save(table, row as Row, key);
   set({ pending: await e.pending(), version: state.version + 1 });
   void syncNow();
   return out;

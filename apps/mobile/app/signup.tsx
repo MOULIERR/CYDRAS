@@ -36,7 +36,7 @@ export default function Signup() {
     <Screen>
       <H1>Start your free trial</H1>
       <Small>14 days free. No card needed. Cancel anytime.</Small>
-      <Field label="Company name" value={f.company} onChangeText={up('company')} placeholder="Coastal Air & Heat" />
+      <Field label="Company name" value={f.company} onChangeText={up('company')} placeholder="Company name" />
       <Field label="Your name" value={f.name} onChangeText={up('name')} />
       {!session && <>
         <Field label="Email" value={f.email} onChangeText={up('email')} autoCapitalize="none" keyboardType="email-address" />
