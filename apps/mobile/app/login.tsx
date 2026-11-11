@@ -17,7 +17,7 @@ export default function Login() {
   }
   async function reset() {
     if (!email.trim()) return Alert.alert('Type your email first');
-    await supabase.auth.resetPasswordForEmail(email.trim());
+    await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: 'https://cydras.vercel.app/newpassword' });
     Alert.alert('Check your email', 'We sent a link to make a new password.');
   }
   return (

@@ -4,7 +4,7 @@ import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, use
 import './styles.css';
 import { SessionProvider, useSession, isManager } from './session';
 import { supabase } from './supabase';
-import { Login, Signup, Join } from './pages/Auth';
+import { Login, Signup, Join, NewPassword } from './pages/Auth';
 import { Dashboard } from './pages/Dashboard';
 import { Jobs } from './pages/Jobs';
 import { Customers, Customer } from './pages/Customers';
@@ -38,6 +38,7 @@ function Shell() {
   useEffect(() => setOpen(false), [loc.pathname]);
   if (/^\/(book|p)\//.test(loc.pathname)) return <Routes><Route path="/book/:slug" element={<BookPage />} /><Route path="/p/:token" element={<PortalPage />} /></Routes>;
   if (loading) return <main className="content s">Loading…</main>;
+  if (loc.pathname === '/newpassword') return <div className="authwrap"><NewPassword /></div>;
   if (!session) return (
     <div className="authwrap"><Routes>
       <Route path="/signup" element={<Signup />} />

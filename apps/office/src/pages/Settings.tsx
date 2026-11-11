@@ -87,6 +87,7 @@ export function Account() {
         <div className="card"><h3>Preferences</h3><b>Look</b>
           <div className="seg" role="group" aria-label="Look">{[['system', 'Computer setting'], ['light', 'Light'], ['dark', 'Dark']].map(([k, l]) => <button key={k} aria-pressed={theme === k} onClick={() => setTheme(k)}>{l}</button>)}</div>
           <span className="s">This only changes this computer.</span>
+          <div><Link className="btn" to="/newpassword">Change my password</Link></div>
           <div className="dsp"><div className="k">Signed in as</div><div>{member.name}</div><div className="k">Trade</div><div>HVAC</div><div className="k">Plan</div><div><Link to="/billing">See your plan →</Link></div></div>
         </div>
       </div>

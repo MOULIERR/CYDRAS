@@ -17,7 +17,7 @@ export function Login() {
       <label>Password<input value={pw} onChange={(e) => setPw(e.target.value)} type="password" autoComplete="current-password" required /></label>
       {err && <div className="err">{err}</div>}
       <button className="pri" disabled={busy}>Sign in</button>
-      <button type="button" onClick={async () => { if (!email) return setErr('Type your email first'); await supabase.auth.resetPasswordForEmail(email, { redirectTo: location.origin }); setErr('Check your email for a link to make a new password.'); }}>Forgot password</button>
+      <button type="button" onClick={async () => { if (!email) return setErr('Type your email first'); await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${location.origin}/newpassword` }); setErr('Check your email for a link to make a new password.'); }}>Forgot password</button>
       <div className="muted">New shop? <Link to="/signup">Start a free trial</Link> · Have a code? <Link to="/join">Join your team</Link></div>
     </form>
   );
@@ -80,6 +80,33 @@ export function Join() {
       {err && <div className="err">{err}</div>}
       <button className="pri" disabled={busy}>Join</button>
       {session ? <><Link to="/signup">Start my own company instead</Link><button type="button" onClick={() => supabase.auth.signOut()}>Sign out</button></> : <Link to="/">Back to sign in</Link>}
+    </form>
+  );
+}
+
+/** Make a new password (after the "Forgot password" email link, or any time from Account). */
+export function NewPassword() {
+  const { session } = useSession();
+  const [pw, setPw] = useState(''); const [pw2, setPw2] = useState(''); const [err, setErr] = useState(''); const [done, setDone] = useState(false); const [busy, setBusy] = useState(false);
+  async function go(e: React.FormEvent) {
+    e.preventDefault(); setErr('');
+    if (pw.length < 8) return setErr('Use at least 8 characters.');
+    if (pw !== pw2) return setErr("The two passwords don't match.");
+    setBusy(true);
+    const { error } = await supabase.auth.updateUser({ password: pw });
+    setBusy(false);
+    if (error) setErr(error.message); else setDone(true);
+  }
+  if (!session) return <div className="card auth"><h1>Link expired</h1><p className="muted">This link is old or was already used. Go back to sign in and tap <b>Forgot password</b> again.</p><Link to="/">Back to sign in</Link></div>;
+  if (done) return <div className="card auth"><h1>Password saved ✓</h1><p className="muted">Use your new password on the website and the phone app.</p><Link to="/">Continue</Link></div>;
+  return (
+    <form className="card auth" onSubmit={go}>
+      <h1>Make a new password</h1>
+      <p className="muted">For {session.user.email}</p>
+      <label>New password<input value={pw} onChange={(e) => setPw(e.target.value)} type="password" autoComplete="new-password" required /></label>
+      <label>Type it again<input value={pw2} onChange={(e) => setPw2(e.target.value)} type="password" autoComplete="new-password" required /></label>
+      {err && <div className="err">{err}</div>}
+      <button className="pri" disabled={busy}>{busy ? 'Saving…' : 'Save password'}</button>
     </form>
   );
 }

@@ -18,7 +18,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => { setSession(data.session); await load(data.session); setLoading(false); });
-    const { data } = supabase.auth.onAuthStateChange((_e, s) => { setSession(s); void load(s); });
+    const { data } = supabase.auth.onAuthStateChange((e, s) => { setSession(s); void load(s); if (e === 'PASSWORD_RECOVERY' && location.pathname !== '/newpassword') location.replace('/newpassword'); });
     return () => data.subscription.unsubscribe();
   }, []);
   return <C.Provider value={{ session, member, loading, reload: () => load(session) }}>{children}</C.Provider>;
